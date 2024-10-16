@@ -16,6 +16,9 @@ function App() {
   const [sku, setSku] = useState<string>('');
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // TimeOut
+  let clearScan;
+
   // Ref
   const inputSearchRef = useRef(null);
 
@@ -23,8 +26,11 @@ function App() {
   const searchProduct = async (e: any) => {
     e.preventDefault();
 
+    inputSearchRef!.current.value = "";
+    clearTimeout(clearScan);
+
     // Deshabilitar campo de busqueda
-    inputSearchRef!.current.setAttribute('disabled',true);
+    // inputSearchRef!.current.setAttribute('disabled',true);
 
     if (!sku) {
       setError(true);
@@ -41,13 +47,13 @@ function App() {
       setProduct(responseData); // Re-Renderer
     }
 
-    setTimeout(() => {
+    clearScan = setTimeout(() => {
       setError(false);
       setNotFound(false);
       setProduct(null);
-      inputSearchRef!.current.value = "";
       inputSearchRef!.current.removeAttribute('disabled');
       inputSearchRef!.current.focus();
+      clearTimeout(clearScan);
     }, 6000);
   };
 
@@ -78,7 +84,7 @@ function App() {
                 <button
                   id="search-button"
                   className="btn-search"
-                  disabled={!!product}
+                  // disabled={!!product}
                   onClick={searchProduct}
                 >
                   Buscar
