@@ -22,7 +22,10 @@ export async function getProduct(sku: string, params: URLSearchParams) {
       ],
       branch: params.get('branch') || 'T01',
       where: {
-        sku: sku,
+        "Op.or": {
+          sku: sku,
+          upc: sku
+        }
       },
     }),
   })

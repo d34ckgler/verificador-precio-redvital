@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { IProduct } from './interface/IProduct';
 import { getProduct } from './services/product.services';
 import scanner from './assets/scan.svg';
@@ -8,6 +8,7 @@ import './App.css';
 import { useSearchParams } from 'react-router-dom';
 
 function App() {
+  // Hooks 
   const [branch, setBranch] = useState<string>('');
   const [product, setProduct] = useState<IProduct | null>(null);
   const [notFound, setNotFound] = useState<boolean>(false);
@@ -15,9 +16,15 @@ function App() {
   const [sku, setSku] = useState<string>('');
   const [searchParams, setSearchParams] = useSearchParams();
 
+  // Ref
+  const inputSearchRef = useRef(null);
+
   // Buscar producto
-  const searchProduct = async (e: React.FormEvent<HTMLFormElement>) => {
+  const searchProduct = async (e: any) => {
     e.preventDefault();
+
+    // Deshabilitar campo de busqueda
+    inputSearchRef!.current.setAttribute('disabled',true);
 
     if (!sku) {
       setError(true);
@@ -38,6 +45,9 @@ function App() {
       setError(false);
       setNotFound(false);
       setProduct(null);
+      inputSearchRef!.current.value = "";
+      inputSearchRef!.current.removeAttribute('disabled');
+      inputSearchRef!.current.focus();
     }, 6000);
   };
 
@@ -58,10 +68,10 @@ function App() {
                 <input
                   type="text"
                   id="search-input"
+                  ref={inputSearchRef}
                   className="search br-hover-red"
                   onChange={(e) => setSku(e.target.value)}
                   required
-                  readOnly={!!product}
                   autoFocus={true}
                   placeholder="C&oacute;digo del producto"
                 />
