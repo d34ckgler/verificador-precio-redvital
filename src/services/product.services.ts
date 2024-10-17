@@ -37,3 +37,39 @@ export async function getProduct(sku: string, params: URLSearchParams) {
     .then((res) => res.json())
     .then((json) => json.data.Product[0]);
 }
+
+export async function getProductPromotion(params: URLSearchParams) {
+  return await fetch('https://api.redvitalmakro.com/api/generic/product', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      client: 'sysadmin',
+      'secret-key': '7uGBvZm0R5TvZgKmaIDu15hf78TE9zKlEQkXij1ofZgjNAVPJN',
+    },
+    body: JSON.stringify({
+      options: {
+        model: 'Product',
+        attributes: [
+          'sku',
+          'name',
+          'description',
+          'mark',
+          'price',
+          'reference',
+          'mark',
+          'categoryId',
+          'subCategoryId',
+          'lineId',
+          'detail',
+        ],
+        limit: 30
+      },
+      data: {
+        cache: true,
+        branch: params.get('branch') || 'T01',
+      }
+    }),
+  })
+    .then((res) => res.json())
+    .then((json) => json.data.Product);
+}

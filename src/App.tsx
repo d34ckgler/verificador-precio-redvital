@@ -1,4 +1,4 @@
-import { getProduct } from './services/product.services';
+import { getProduct, getProductPromotion } from './services/product.services';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { IProduct } from './interface/IProduct';
@@ -14,6 +14,7 @@ function App() {
   const [branch, setBranch] = useState<string>('');
   const [tax, setTax] = useState<any>(null);
   const [product, setProduct] = useState<IProduct | null>(null);
+  const [promotions, setPromotions] = useState<Array<IProduct> | null>(null);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
   const [sku, setSku] = useState<string>('');
@@ -68,7 +69,24 @@ function App() {
     });
   }
 
+  // Cargar Promociones
+  if (!promotions) {
+    getProductPromotion(searchParams).then(promotionProducts => {
+      setPromotions(promotionProducts);
+    });
+  }
+
   useEffect(() => { }, [product]);
+
+  const getPicture = (sku: string) => {
+    let baseUrl = "https://tienda.redvital.com/wp-content/uploads/2023/06/<sku>-300x300.jpg";
+    return baseUrl.replace('<sku>', sku.slice(1));
+  };
+
+  const onLoadErrorPicture = ({currentTarget}) => {
+    currentTarget.onerror = null; // prevents looping
+    currentTarget.src="https://www.shutterstock.com/image-vector/premium-picture-icon-logo-line-600nw-749843887.jpg";
+  }
 
   return (
     <>
@@ -155,78 +173,38 @@ function App() {
 
         <section className="promotion-contain">
           <Carousel className="text-green-500" draggable={true}>
-            <div id="promotion#1">
-              <div className="product">
-                <img
-                  src="https://www.farmadon.com.ve/wp-content/uploads/2022/06/Clotrimazol-1-Crema-Vaginal-5-Aplicadores-X-50Gr.-Tiares-2v.png"
-                  alt="redvital+makro"
-                  className="product-img"
-                />
-                <span className="tag-promo">-30%</span>
-              </div>
-              <div className="promotion-info">
-                <span className="promotion-title">
-                  CLOTRIMAZOL 1% X 30G CREM VAG TIARES
-                </span>
-                <span className="tag-product cyan">Medicamentos</span>
-                <p className="promotion-divider"></p>
-              </div>
-              <div className="promotion-price-container">
-                <span className="promotion-price">
-                  <p>$5</p>
-                  <i className="decimal">25</i>
-                </span>
-                <span className="promotion-announce">¡SUPER PRECIOS!</span>
-              </div>
-            </div>
-            <div id="promotion#2">
-              <div className="product">
-                <img
-                  src="https://calox.com/wp-content/uploads/2023/08/Atamel-Forte.jpg"
-                  alt="redvital+makro"
-                  className="product-img"
-                />
-                <span className="tag-promo">-30%</span>
-              </div>
-              <div className="promotion-info">
-                <span className="promotion-title">
-                  ATAMEL FORTE 650MG TABLETAS
-                </span>
-                <span className="tag-product cyan">Medicamentos</span>
-                <p className="promotion-divider"></p>
-              </div>
-              <div className="promotion-price-container">
-                <span className="promotion-price">
-                  <p>$5</p>
-                  <i className="decimal">25</i>
-                </span>
-                <span className="promotion-announce">¡SUPER PRECIOS!</span>
-              </div>
-            </div>
-            <div id="promotion#2">
-              <div className="product">
-                <img
-                  src="https://www.farmago.com.ve/wp-content/uploads/2020/12/imagen65-01-4.png"
-                  alt="redvital+makro"
-                  className="product-img"
-                />
-                <span className="tag-promo">-30%</span>
-              </div>
-              <div className="promotion-info">
-                <span className="promotion-title">
-                  AFLAMAX 50MG 20 TAB TABLETAS
-                </span>
-                <span className="tag-product cyan">Medicamentos</span>
-                <p className="promotion-divider"></p>
-              </div>
-              <div className="promotion-price-container">
-                <span className="promotion-price">
-                  <p>$4</p>
-                  <i className="decimal">25</i>
-                </span>
-                <span className="promotion-announce">¡SUPER PRECIOS!</span>
-              </div>
-            </div>
+            {
+              promotions && promotions?.map(promotion => (
+                <div id={promotion.sku}>
+                  <div className="product">
+                    <img
+                      src={getPicture(promotion.sku)}
+                      onError={onLoadErrorPicture}
+                      alt={promotion.description}
+                      className="product-img"
+                    />
+                    {
+                      promotion.detail?.inPromotion ? 
+                      (<span className="tag-promo">-30%</span>) : null
+                    }
+                  </div>
+                  <div className="promotion-info">
+                    <span className="promotion-title">
+                      {promotion.name}
+                    </span>
+                    <span className="tag-product cyan">{promotion.mark}</span>
+                    <p className="promotion-divider"></p>
+                  </div>
+                  <div className="promotion-price-container">
+                    <span className="promotion-price">
+                      <p>${(promotion.detail.price).toFixed(2).split('.')[0]}</p>
+                      <i className="decimal">{(promotion.detail.price).toFixed(2).split('.')[1]}</i>
+                    </span>
+                    <span className="promotion-announce">¡SUPER PRECIOS!</span>
+                  </div>
+                </div>
+              ))
+            }
           </Carousel>
 
           {/* <div className="product">

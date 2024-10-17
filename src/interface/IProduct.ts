@@ -2,6 +2,7 @@ export interface IProduct {
   sku: string;
   name: string;
   description: string;
+  mark: string;
   price: number;
   tax: number;
   detail: Array<IBranch | IBranchOnly> | IBranch;

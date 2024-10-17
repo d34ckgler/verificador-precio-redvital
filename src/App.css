@@ -184,6 +184,8 @@ body {
 }
 
 .promotion-price-container {
+  position: relative;
+  top: -20px;
   display: flex;
   flex-direction: row;
   align-items: center;
