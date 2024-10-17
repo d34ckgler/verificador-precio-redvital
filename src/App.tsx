@@ -125,7 +125,7 @@ function App() {
             <main className="product-info">
               <section className="header-product-info">
                 <span
-                  className={`tag-product ${product?.price <= product?.detail?.price ? 'invisible' : ''
+                  className={`tag-product ${!product.detail?.inOffert ? 'invisible' : ''
                     }`}
                 >
                   En Oferta
