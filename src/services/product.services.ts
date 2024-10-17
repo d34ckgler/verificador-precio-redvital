@@ -1,5 +1,5 @@
 export async function getProduct(sku: string, params: URLSearchParams) {
-  return await fetch('https://api.redvitalmakro.com/api/oasis/products', {
+  return await fetch('https://api.redvitalmakro.com/api/generic/product', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -7,26 +7,31 @@ export async function getProduct(sku: string, params: URLSearchParams) {
       'secret-key': '7uGBvZm0R5TvZgKmaIDu15hf78TE9zKlEQkXij1ofZgjNAVPJN',
     },
     body: JSON.stringify({
-      model: 'Product',
-      attributes: [
-        'sku',
-        'name',
-        'description',
-        'price',
-        'reference',
-        'mark',
-        'categoryId',
-        'subCategoryId',
-        'lineId',
-        'detail',
-      ],
-      branch: params.get('branch') || 'T01',
-      where: {
-        "Op.or": {
-          sku: sku,
-          upc: sku
-        }
+      options: {
+        model: 'Product',
+        attributes: [
+          'sku',
+          'name',
+          'description',
+          'price',
+          'reference',
+          'mark',
+          'categoryId',
+          'subCategoryId',
+          'lineId',
+          'detail',
+        ],
+        where: {
+          "Op.or": {
+            sku: sku,
+            upc: sku
+          }
+        },
       },
+      data: {
+        cache: true,
+        branch: params.get('branch') || 'T01',
+      }
     }),
   })
     .then((res) => res.json())

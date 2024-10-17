@@ -1,15 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { IProduct } from './interface/IProduct';
 import { getProduct } from './services/product.services';
-import scanner from './assets/scan.svg';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { IProduct } from './interface/IProduct';
 import { Carousel } from 'flowbite-react';
+import scanner from './assets/scan.svg';
+import logo from './assets/red-mak.svg';
 // Azucar sintetica
 import './App.css';
-import { useSearchParams } from 'react-router-dom';
+import { getTaxRate } from './services/tax_rate.service';
 
 function App() {
   // Hooks 
   const [branch, setBranch] = useState<string>('');
+  const [tax, setTax] = useState<any>(null);
   const [product, setProduct] = useState<IProduct | null>(null);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
@@ -17,10 +20,10 @@ function App() {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // TimeOut
-  let clearScan;
+  let clearScan: any;
 
   // Ref
-  const inputSearchRef = useRef(null);
+  const inputSearchRef: any = useRef(null);
 
   // Buscar producto
   const searchProduct = async (e: any) => {
@@ -34,16 +37,15 @@ function App() {
 
     if (!sku) {
       setError(true);
-      throw new Error('Ingrese un SKU');
+      inputSearchRef!.current.focus();
+      throw "Por favor, escanee un producto.";
     }
 
     const responseData: any = await getProduct(sku, searchParams);
-    console.info(responseData);
     if (!responseData) {
       setNotFound(true);
     } else {
       setNotFound(false);
-      console.log(product);
       setProduct(responseData); // Re-Renderer
     }
 
@@ -51,13 +53,22 @@ function App() {
       setError(false);
       setNotFound(false);
       setProduct(null);
+      setSku("");
       inputSearchRef!.current.removeAttribute('disabled');
       inputSearchRef!.current.focus();
       clearTimeout(clearScan);
     }, 6000);
   };
 
-  useEffect(() => {}, [product]);
+  // Cargar Tasa
+  if (!tax) {
+    getTaxRate().then(taxRate => {
+      console.info(taxRate);
+      setTax(taxRate);
+    });
+  }
+
+  useEffect(() => { }, [product]);
 
   return (
     <>
@@ -66,7 +77,7 @@ function App() {
           <header>
             <section className="header">
               <img
-                src="https://precios.makrove.com/static/jf/images/red-mak.svg"
+                src={logo}
                 alt="redvital+makro"
                 className="logo"
               />
@@ -75,7 +86,7 @@ function App() {
                   type="text"
                   id="search-input"
                   ref={inputSearchRef}
-                  className="search br-hover-red"
+                  className="search"
                   onChange={(e) => setSku(e.target.value)}
                   required
                   autoFocus={true}
@@ -96,9 +107,8 @@ function App() {
             <main className="product-info">
               <section className="header-product-info">
                 <span
-                  className={`tag-product ${
-                    product?.price <= product?.detail?.price ? 'invisible' : ''
-                  }`}
+                  className={`tag-product ${product?.price <= product?.detail?.price ? 'invisible' : ''
+                    }`}
                 >
                   En Oferta
                 </span>
@@ -116,7 +126,7 @@ function App() {
                 <section>
                   <p className="label-price">Precio</p>
                   <p className="price">
-                    Bs. {product.detail?.price || product.price}
+                    Bs. {(product.detail?.price * tax?.factor).toFixed(2) || (product.price * tax?.factor).toFixed(2)}
                   </p>
                 </section>
                 <section>

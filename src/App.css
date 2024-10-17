@@ -83,6 +83,12 @@ body {
   }
 }
 
+.input-error-placeholder {
+  &::placeholder {
+    color: #ff0000;
+  }
+}
+
 .product-contain > header > .header > .search-control > button {
   padding: 0.5rem;
   border-style: none !important;
