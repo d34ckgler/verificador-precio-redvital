@@ -11,7 +11,7 @@ import { getTaxRate } from './services/tax_rate.service';
 
 function App() {
   // Hooks 
-  const [branch, setBranch] = useState<string>('');
+  // const [branch, setBranch] = useState<string>('');
   const [tax, setTax] = useState<any>(null);
   const [product, setProduct] = useState<IProduct | null>(null);
   const [promotions, setPromotions] = useState<Array<IProduct> | null>(null);
@@ -83,7 +83,7 @@ function App() {
     return baseUrl.replace('<sku>', sku.slice(1));
   };
 
-  const onLoadErrorPicture = ({currentTarget}) => {
+  const onLoadErrorPicture = ({currentTarget}: any) => {
     currentTarget.onerror = null; // prevents looping
     currentTarget.src="https://www.shutterstock.com/image-vector/premium-picture-icon-logo-line-600nw-749843887.jpg";
   }
