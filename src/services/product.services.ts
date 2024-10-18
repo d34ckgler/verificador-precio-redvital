@@ -8,7 +8,6 @@ export async function getProduct(sku: string, params: URLSearchParams) {
     },
     body: JSON.stringify({
       options: {
-        model: 'Product',
         attributes: [
           'sku',
           'name',

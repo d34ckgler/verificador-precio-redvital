@@ -365,15 +365,15 @@ body {
   > p:first-child {
   color: #585858;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 40px;
   line-height: 0;
 }
 
 .product-contain > .product-info > .footer-product-info > section > p {
   color: #2349c6;
   font-weight: 600;
-  font-size: 26px;
-  line-height: 39px;
+  font-size: 50px;
+  line-height: 99px;
 
   user-select: none !important;
 }
