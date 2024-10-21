@@ -150,7 +150,7 @@ function App() {
                 <section>
                   <p className="label-price">Precio Ref.</p>
                   <p className="price float-right">
-                    {product.detail?.price || product.price} #
+                    {product.detail?.price.toFixed(2) || product.price.toFixed(2)} #
                   </p>
                 </section>
               </section>
