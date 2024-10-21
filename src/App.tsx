@@ -26,6 +26,12 @@ function App() {
   // Ref
   const inputSearchRef: any = useRef(null);
 
+  const searchKeyPress = async (e:any) => {
+    if (e.key === 'Enter') {
+      await searchProduct(e);
+    }
+  }
+
   // Buscar producto
   const searchProduct = async (e: any) => {
     e.preventDefault();
@@ -106,6 +112,7 @@ function App() {
                   ref={inputSearchRef}
                   className="search"
                   onChange={(e) => setSku(e.target.value)}
+                  onKeyUp={searchKeyPress}
                   required
                   autoFocus={true}
                   placeholder="C&oacute;digo del producto"
